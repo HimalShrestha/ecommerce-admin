@@ -11,6 +11,25 @@ export default {
     },
     {
       title: true,
+      name: 'Member',
+      class: '',
+      wrapper: {
+        element: '',
+        attributes: {}
+      }
+    },
+    {
+      name: 'Admin',
+      url: '/admin',
+      icon: 'icon-user'
+    },
+    {
+      name: 'User',
+      url: '/user',
+      icon: 'icon-people'
+    },
+    {
+      title: true,
       name: 'Main',
       class: '',
       wrapper: {
@@ -42,6 +61,11 @@ export default {
       name: 'Carousel',
       url: '/carousel',
       icon: 'icon-film'
+    },
+    {
+      name: 'Payment',
+      url: '/payment',
+      icon: 'icon-wallet'
     }
     // {
     //   title: true,

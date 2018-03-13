@@ -6,6 +6,9 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import Croppa from 'vue-croppa'
+import { loadProgressBar } from 'axios-progress-bar'
+
+Vue.use(loadProgressBar)
 
 Vue.use(Croppa)
 
@@ -14,7 +17,7 @@ Vue.use(BootstrapVue)
 Vue.prototype.$http = axios
 
 if (process.env.NODE_ENV === 'production') {
-  Vue.prototype.API_ENDPOINT = 'http://202.79.34.189:7711'
+  Vue.prototype.API_ENDPOINT = ''
   Vue.prototype.WEB_ROOT = 'http://202.79.34.189:7711'
 }
 

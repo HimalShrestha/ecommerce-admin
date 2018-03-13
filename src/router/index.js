@@ -61,6 +61,9 @@ import Orders from '@/views/order/Orders'
 import OrderSingle from '@/views/order/OrderSingle'
 import Seller from '@/views/seller/Seller'
 import Carousel from '@/views/carousel/Carousel'
+import Admin from '@/views/member/Admin'
+import User from '@/views/member/User'
+import Payment from '@/views/payment/Payment'
 
 Vue.use(Router)
 
@@ -116,6 +119,21 @@ export default new Router({
           path: 'carousel/',
           name: 'Carousel',
           component: Carousel
+        },
+        {
+          path: 'admin',
+          name: 'Admin',
+          component: Admin
+        },
+        {
+          path: 'user',
+          name: 'User',
+          component: User
+        },
+        {
+          path: 'payment',
+          name: 'Payment',
+          component: Payment
         },
         // {
         //   path: 'product',

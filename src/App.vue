@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import 'axios-progress-bar/dist/nprogress.css'
 import 'vue-croppa/dist/vue-croppa.css'
 export default {
   name: 'app'

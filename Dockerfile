@@ -1,4 +1,4 @@
-FROM node:8.4.0
+FROM node:latest
 
 # Create app directory
 RUN mkdir -p /usr/src/ecommAdmin
