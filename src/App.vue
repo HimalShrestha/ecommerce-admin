@@ -25,4 +25,7 @@ export default {
 <style lang="scss">
   // Import Main styles for this application
   @import './scss/style';
+  button.disabled{
+    cursor:not-allowed;
+  }
 </style>

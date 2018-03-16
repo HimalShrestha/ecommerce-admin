@@ -66,6 +66,11 @@ export default {
       name: 'Payment',
       url: '/payment',
       icon: 'icon-wallet'
+    },
+    {
+      name: 'Message',
+      url: '/message',
+      icon: 'icon-envelope'
     }
     // {
     //   title: true,

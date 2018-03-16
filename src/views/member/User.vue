@@ -98,78 +98,125 @@
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.changePassword.$error">
                   <label for="password">Password</label>
-                  <b-form-input type="text" id="password" placeholder="Enter Password to change" v-model="changePassword"></b-form-input>
+                  <b-form-input type="text" id="password" :state="$v.changePassword.$error?false:null" placeholder="Enter Password to change" @blur.native="$v.changePassword.$touch" v-model.trim="changePassword"></b-form-input>
+                  <div v-if="$v.changePassword.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.changePassword.minLength">Must have atleast {{ $v.changePassword.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.changePassword.maxLength">Must not exceed {{ $v.changePassword.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.userSingle.UserFirstName.$error">
                   <label for="fname">Firstname</label>
-                  <b-form-input type="text" id="fname" placeholder="Enter Firstname" v-model="userSingle.UserFirstName"></b-form-input>
+                  <b-form-input type="text" id="fname" :state="$v.userSingle.UserFirstName.$error?false:null" @blur.native="$v.userSingle.UserFirstName.$touch" placeholder="Enter Firstname" v-model.trim="userSingle.UserFirstName"></b-form-input>
+                  <div v-if="$v.userSingle.UserFirstName.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserFirstName.required">Firstname is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserFirstName.alpha">Must be only alphabets</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserFirstName.minLength">Must have atleast {{ $v.userSingle.UserFirstName.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserFirstName.maxLength">Must not exceed {{ $v.userSingle.UserFirstName.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.userSingle.UserLastName.$error">
                   <label for="lname">Lastname</label>
-                  <b-form-input type="text" id="lname" placeholder="Enter Lastname" v-model="userSingle.UserLastName"></b-form-input>
+                  <b-form-input type="text" id="lname" :state="$v.userSingle.UserLastName.$error?false:null" @blur.native="$v.userSingle.UserLastName.$touch" placeholder="Enter Lastname" v-model.trim="userSingle.UserLastName"></b-form-input>
+                  <div v-if="$v.userSingle.UserLastName.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserLastName.required">Lastname is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserLastName.alpha">Must be only alphabets</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserLastName.minLength">Must have atleast {{ $v.userSingle.UserLastName.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserLastName.maxLength">Must not exceed {{ $v.userSingle.UserLastName.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.userSingle.UserAddress.$error">
                   <label for="address">Address</label>
-                  <b-form-input type="text" id="address" placeholder="Enter Address" v-model="userSingle.UserAddress"></b-form-input>
+                  <b-form-input type="text" id="address" :state="$v.userSingle.UserAddress.$error?false:null" @blur.native="$v.userSingle.UserAddress.$touch" placeholder="Enter Address" v-model.trim="userSingle.UserAddress"></b-form-input>
+                  <div v-if="$v.userSingle.UserAddress.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserAddress.minLength">Must have atleast {{ $v.userSingle.UserAddress.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserAddress.maxLength">Must not exceed {{ $v.userSingle.UserAddress.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.userSingle.UserAddress2.$error">
                   <label for="address2">Address 2</label>
-                  <b-form-input type="text" id="address2" placeholder="Enter Address 2" v-model="userSingle.UserAddress2"></b-form-input>
+                  <b-form-input type="text" id="address2" :state="$v.userSingle.UserAddress2.$error?false:null" @blur.native="$v.userSingle.UserAddress2.$touch" placeholder="Enter Address 2" v-model.trim="userSingle.UserAddress2"></b-form-input>
+                  <div v-if="$v.userSingle.UserAddress2.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserAddress2.minLength">Must have atleast {{ $v.userSingle.UserAddress2.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserAddress2.maxLength">Must not exceed {{ $v.userSingle.UserAddress2.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
-              <b-col sm="6">
+              <b-col sm="6" :state="!$v.userSingle.UserCity.$error">
                 <b-form-group>
                   <label for="city">City</label>
-                  <b-form-input type="text" id="city" placeholder="Enter City" v-model="userSingle.UserCity"></b-form-input>
+                  <b-form-input type="text" id="city" :state="$v.userSingle.UserCity.$error?false:null" @blur.native="$v.userSingle.UserCity.$touch" placeholder="Enter City" v-model.trim="userSingle.UserCity"></b-form-input>
+                  <div v-if="$v.userSingle.UserCity.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserCity.minLength">Must have atleast {{ $v.userSingle.UserCity.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserCity.maxLength">Must not exceed {{ $v.userSingle.UserCity.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.userSingle.UserState.$error">
                   <label for="state">State</label>
-                  <b-form-input type="text" id="state" placeholder="Enter State" v-model="userSingle.UserState"></b-form-input>
+                  <b-form-input type="text" id="state" :state="$v.userSingle.UserState.$error?false:null" @blur.native="$v.userSingle.UserState.$touch" placeholder="Enter State" v-model.trim="userSingle.UserState"></b-form-input>
+                  <div v-if="$v.userSingle.UserState.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserState.minLength">Must have atleast {{ $v.userSingle.UserState.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserState.maxLength">Must not exceed {{ $v.userSingle.UserState.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.userSingle.UserZip.$error">
                   <label for="zip">Zip</label>
-                  <b-form-input type="text" id="zip" placeholder="Enter Zip" v-model="userSingle.UserZip"></b-form-input>
+                  <b-form-input type="text" id="zip" :state="$v.userSingle.UserZip.$error?false:null" @blur.native="$v.userSingle.UserZip.$touch" placeholder="Enter Zip" v-model.trim="userSingle.UserZip"></b-form-input>
+                  <div v-if="$v.userSingle.UserZip.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserZip.numeric">Zip must be number only</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserZip.minLength">Must have atleast {{ $v.userSingle.UserZip.$params.minLength.min}} numbers</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserZip.maxLength">Must not exceed {{ $v.userSingle.UserZip.$params.maxLength.max}} numbers</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.userSingle.UserPhone.$error">
                   <label for="phone">Phone</label>
-                  <b-form-input type="text" id="phone" placeholder="Enter Phone" v-model="userSingle.UserPhone"></b-form-input>
+                  <b-form-input type="text" id="phone" :state="$v.userSingle.UserPhone.$error?false:null" @blur.native="$v.userSingle.UserPhone.$touch" placeholder="Enter Phone" v-model.trim="userSingle.UserPhone"></b-form-input>
+                  <div v-if="$v.userSingle.UserPhone.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserPhone.numeric">Phone must be number only</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserPhone.minLength">Must have atleast {{ $v.userSingle.UserPhone.$params.minLength.min}} numbers</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserPhone.maxLength">Must not exceed {{ $v.userSingle.UserPhone.$params.maxLength.max}} numbers</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.userSingle.UserCountry.$error">
                   <label for="Country">Country</label>
-                  <b-form-input type="text" id="Country" placeholder="Enter Country" v-model="userSingle.UserCountry"></b-form-input>
+                  <b-form-input type="text" id="Country" :state="$v.userSingle.UserCountry.$error?false:null" @blur.native="$v.userSingle.UserCountry.$touch" placeholder="Enter Country" v-model.trim="userSingle.UserCountry"></b-form-input>
+                  <div v-if="$v.userSingle.UserCountry.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserCountry.alpha">Must be alphabets only</div>
+                    <div class="invalid-feedback d-block" v-if="!$v.userSingle.UserCountry.minLength">Must have atleast {{ $v.userSingle.UserCountry.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.userSingle.UserCountry.maxLength">Must not exceed {{ $v.userSingle.UserCountry.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
@@ -218,7 +265,7 @@
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="updateUser">Update</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="updateUser" :disabled="$v.userSingle.$invalid">Update</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="closeEdit">Cancel</b-btn>
     </b-modal>
 
@@ -229,14 +276,6 @@
       <b-button variant="success" @click="deleteUser">Yes</b-button>
       <b-button variant="outline-danger" @click="cancelDelete">Cancel</b-button>
     </b-modal>
-    <div class="position-alert">
-      <b-alert :variant="alertVariant"
-               dismissible
-               :show="alertVisible"
-               @dismissed="alertVisible=false">
-        {{alertText}}
-      </b-alert>
-    </div>
 
   </div>
 </template>
@@ -244,6 +283,7 @@
 <script>
 import {Events} from '../../events.js'
 import cSwitch from '../../components/Switch'
+const {required, numeric, minLength, alpha, maxLength} = require('vuelidate/lib/validators')
 export default {
   name: 'User',
   components: {
@@ -271,14 +311,27 @@ export default {
         UserPhone: '',
         UserRole: '',
         UserSellerID: '',
-        UserStatus: ''
+        UserStatus: '',
+        UserAddress: '',
+        UserAddress2: ''
       },
       changePassword: '',
-      deleteId: '',
-      alertVariant: 'success',
-      alertVisible: false,
-      alertText: 'test'
+      deleteId: ''
     }
+  },
+  validations: {
+    userSingle: {
+      UserFirstName: { required, alpha, minLength: minLength(2), maxLength: maxLength(50) },
+      UserLastName: { required, alpha, minLength: minLength(2), maxLength: maxLength(50) },
+      UserCity: { minLength: minLength(2), maxLength: maxLength(90) },
+      UserState: { minLength: minLength(2), maxLength: maxLength(20) },
+      UserZip: { numeric, minLength: minLength(2), maxLength: maxLength(12) },
+      UserPhone: { numeric, minLength: minLength(10), maxLength: maxLength(20) },
+      UserCountry: { alpha, minLength: minLength(2), maxLength: maxLength(20) },
+      UserAddress: { minLength: minLength(2), maxLength: maxLength(100) },
+      UserAddress2: { minLength: minLength(2), maxLength: maxLength(50) }
+    },
+    changePassword: { minLength: minLength(6), maxLength: maxLength(45) }
   },
   methods: {
     updateUser () {
@@ -302,8 +355,10 @@ export default {
         if (response.data.code === 'Success') {
           this.getAllUsers()
           this.closeEdit()
+          Events.$emit('alert', 'User successfully updated', 'success', true)
         }
       }).catch(err => {
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
         console.log('this is an error ', err)
       })
     },
@@ -326,7 +381,9 @@ export default {
         } else {
           this.userSingle.UserEmailVerified = true
         }
+        this.$v.userSingle.$touch()
       }).catch(err => {
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
         console.log('this is an error ', err)
       })
       this.changePassword = ''
@@ -342,10 +399,6 @@ export default {
       this.$refs.confirm.show()
       this.deleteId = id
     },
-    makeAlert () {
-      this.$refs.confirm.show()
-      Events.$emit('alert', 'warning', 3000)
-    },
     showModal () {
       this.$refs.addUser.show()
     },
@@ -356,6 +409,7 @@ export default {
       this.$http.get(this.API_ENDPOINT + '/admin/member/user', {headers: { 'Content-Type': 'application/json' }}).then(response => {
         this.users = response.data
       }).catch(err => {
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
         console.log('this is an error ', err)
       })
     },
@@ -389,8 +443,10 @@ export default {
         if (response.data.code === 'Success') {
           this.getAllUsers()
           this.cancelDelete()
+          Events.$emit('alert', 'User successfully Deleted', 'success', true)
         }
       }).catch(err => {
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
         console.log('this is an error ', err)
       })
     }
@@ -401,11 +457,4 @@ export default {
 }
 </script>
 <style>
-  .position-alert{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 20000
-  }
 </style>

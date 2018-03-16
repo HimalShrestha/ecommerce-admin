@@ -7,6 +7,9 @@ import router from './router'
 import axios from 'axios'
 import Croppa from 'vue-croppa'
 import { loadProgressBar } from 'axios-progress-bar'
+import Vuelidate from 'vuelidate'
+
+Vue.use(Vuelidate)
 
 Vue.use(loadProgressBar)
 

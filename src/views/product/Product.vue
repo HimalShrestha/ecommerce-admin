@@ -34,30 +34,50 @@
           <b-col sm="12">
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.name.$error">
                   <label for="name">Product Name</label>
-                  <b-form-input type="text" id="name" placeholder="Enter your product name" v-model="name"></b-form-input>
+                  <b-form-input type="text" id="name" :state="$v.name.$error?false:null" @blur.native="$v.name.$touch" placeholder="Enter your product name" v-model.trim="name"></b-form-input>
+                  <div v-if="$v.name.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.name.required">Name is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.name.minLength">Must have atleast {{ $v.name.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.name.maxLength">Must not exceed {{ $v.name.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.price.$error">
                   <label for="price">Price</label>
-                  <b-form-input type="number" id="price" placeholder="Enter price" v-model="price"></b-form-input>
+                  <b-form-input type="number" id="price" :state="$v.price.$error?false:null" @blur.native="$v.price.$touch" placeholder="Enter price" v-model.trim="price"></b-form-input>
+                  <div v-if="$v.price.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.price.required">Price is required</div>
+                    <div class="invalid-feedback d-block" v-if="!$v.price.numeric">Must be numbers only</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.price.maxLength">Must not exceed {{ $v.price.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.location.$error">
                   <label for="location">Location</label>
-                  <b-form-input type="text" id="location" placeholder="Enter Product Location" v-model="location"></b-form-input>
+                  <b-form-input type="text" id="location" :state="$v.location.$error?false:null" @blur.native="$v.location.$touch" placeholder="Enter Product Location" v-model.trim="location"></b-form-input>
+                  <div v-if="$v.location.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.location.required">Location is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.location.minLength">Must have atleast {{ $v.location.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.location.maxLength">Must not exceed {{ $v.location.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.stock.$error">
                   <label for="stock">Stock</label>
-                  <b-form-input type="number" id="stock" placeholder="Enter Product Stock" v-model="stock"></b-form-input>
+                  <b-form-input type="number" id="stock" :state="$v.stock.$error?false:null" @blur.native="$v.stock.$touch" placeholder="Enter Product Stock" v-model.trim="stock"></b-form-input>
+                  <div v-if="$v.stock.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.stock.required">Stock is required</div>
+                    <div class="invalid-feedback d-block" v-if="!$v.stock.numeric">Must be numbers only</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.stock.maxLength">Must not exceed {{ $v.stock.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -65,71 +85,96 @@
             <b-row>
               <b-col sm="6">
                 <b-form-group
+                  :state="!$v.selectedCategory.$error"
                   label="Category"
                   label-for="category"
                   :label-cols="11"
                   :horizontal="false">
                   <b-form-select id="category"
                     :plain="false"
-                    v-model="selectedCategory"
+                    v-model.trim="selectedCategory"
+                    :state="$v.selectedCategory.$error?false:null" @blur.native="$v.selectedCategory.$touch"
                     >
                     <option :value="null">Please select</option>
                     <option v-for="c in category" :value="c.CategoryID">{{ c.CategoryName }}</option>
                   </b-form-select>
+                  <div v-if="$v.selectedCategory.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.selectedCategory.required">Category is required</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
                 <b-form-group
+                  :state="!$v.selectedSeller.$error"
                   label="Seller"
                   label-for="seller"
                   :label-cols="11"
                   :horizontal="false">
                   <b-form-select id="seller"
                     :plain="false"
-                    v-model="selectedSeller"
+                    v-model.trim="selectedSeller"
+                    :state="$v.selectedSeller.$error?false:null" @blur.native="$v.selectedSeller.$touch"
                     >
                     <option :value="null">Please select</option>
                     <option v-for="s in sellers" :value="s.SellerID">{{ s.SellerName }}</option>
                   </b-form-select>
+                  <div v-if="$v.selectedSeller.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.selectedSeller.required">Seller is required</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.cartDesc.$error">
                   <label for="cartD">Cart Description</label>
-                  <b-form-textarea id="cartD"
-                                   v-model="cartDesc"
+                  <b-form-textarea id="cartD" :state="$v.cartDesc.$error?false:null" @blur.native="$v.cartDesc.$touch"
+                                   v-model.trim="cartDesc"
                                    placeholder="Enter Cart Description here...."
                                    :rows="3"
                                    :max-rows="3">
                   </b-form-textarea>
+                  <div v-if="$v.cartDesc.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.cartDesc.required">Cart Description is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.cartDesc.minLength">Must have atleast {{ $v.cartDesc.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.cartDesc.maxLength">Must not exceed {{ $v.cartDesc.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.shortDesc.$error">
                   <label for="shortD">Short Description</label>
-                  <b-form-textarea id="shortD"
-                                   v-model="shortDesc"
+                  <b-form-textarea id="shortD" :state="$v.shortDesc.$error?false:null" @blur.native="$v.shortDesc.$touch"
+                                   v-model.trim="shortDesc"
                                    placeholder="Enter Short Product Description here...."
                                    :rows="3"
                                    :max-rows="3">
                   </b-form-textarea>
+                  <div v-if="$v.shortDesc.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.shortDesc.required">Short Description is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.shortDesc.minLength">Must have atleast {{ $v.shortDesc.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.shortDesc.maxLength">Must not exceed {{ $v.shortDesc.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="12">
-                <b-form-group>
+                <b-form-group :state="!$v.longDesc.$error">
                   <label for="longD">Long Description</label>
-                  <b-form-textarea id="longD"
-                                   v-model="longDesc"
+                  <b-form-textarea id="longD" :state="$v.longDesc.$error?false:null" @blur.native="$v.longDesc.$touch"
+                                   v-model.trim="longDesc"
                                    placeholder="Enter long Description here...."
                                    :rows="3"
                                    :max-rows="6">
                   </b-form-textarea>
+                  <div v-if="$v.longDesc.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.longDesc.required">Long Description is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.longDesc.minLength">Must have atleast {{ $v.longDesc.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.longDesc.maxLength">Must not exceed {{ $v.longDesc.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -137,12 +182,20 @@
               <b-col sm="6">
                 <label for="Image" style="width:100%">Product Image</label>
                 <!-- <croppa ref="mainImage" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="Image"></croppa> -->
-                <input type="file" ref="mainImage">
+                <!-- <input type="file"  accept="image/*"> -->
+                <b-form-file v-model="mainImage" ref="mainImage" :state="!$v.mainImage.$invalid" @blur.native="$v.mainImage.$touch" placeholder="Choose an image..." accept="image/*"></b-form-file>
+                <div v-if="$v.mainImage.$invalid">
+                  <div class="invalid-feedback d-block" v-if="!$v.mainImage.required">Image is required</div>
+                </div>
               </b-col>
               <b-col sm="6">
                 <label for="thumb" style="width:100%">Thumbnail</label>
                 <!-- <croppa ref="thumbnail" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="thumb"></croppa> -->
-                <input type="file" ref="thumbnail">
+                <!-- <input type="file" ref="thumbnail" accept="image/*"> -->
+                <b-form-file v-model="thumbnail" ref="thumbnail" :state="!$v.thumbnail.$invalid" @blur.native="$v.thumbnail.$touch" placeholder="Choose an image..." accept="image/*"></b-form-file>
+                <div v-if="$v.thumbnail.$invalid">
+                  <div class="invalid-feedback d-block" v-if="!$v.thumbnail.required">Thumbnail is required</div>
+                </div>
               </b-col>
             </b-row>
             <b-row>&nbsp;</b-row>
@@ -159,7 +212,7 @@
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="addProduct">Add Product</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="addProduct" :disabled="$v.$invalid">Add Product</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
     </b-modal>
     <b-modal ref="confirm" size="sm" centered header-bg-variant="primary" hide-footer title="Alert">
@@ -184,6 +237,7 @@
 <script>
 import cSwitch from '../../components/Switch'
 import {Events} from '../../events.js'
+const {required, numeric, minLength, maxLength} = require('vuelidate/lib/validators')
 export default {
   name: 'Product',
   components: {
@@ -221,6 +275,19 @@ export default {
       alertText: 'test'
     }
   },
+  validations: {
+    selectedCategory: { required },
+    selectedSeller: { required },
+    name: { required, minLength: minLength(2), maxLength: maxLength(100) },
+    price: { required, numeric, maxLength: maxLength(20) },
+    location: { required, minLength: minLength(2), maxLength: maxLength(250) },
+    stock: { required, numeric, maxLength: maxLength(20) },
+    cartDesc: { required, minLength: minLength(2), maxLength: maxLength(250) },
+    shortDesc: { required, minLength: minLength(2), maxLength: maxLength(1000) },
+    longDesc: { required, minLength: minLength(2), maxLength: maxLength(5000) },
+    mainImage: {required},
+    thumbnail: {required}
+  },
   methods: {
     cancelDelete () {
       this.$refs.confirm.hide()
@@ -228,10 +295,6 @@ export default {
     confirm (id) {
       this.$refs.confirm.show()
       this.deleteId = id
-    },
-    makeAlert () {
-      this.$refs.confirm.show()
-      Events.$emit('alert', 'warning', 3000)
     },
     showModal () {
       this.$refs.addProduct.show()
@@ -244,6 +307,7 @@ export default {
         this.products = response.data
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     getCategories () {
@@ -251,6 +315,7 @@ export default {
         this.category = response.data
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     getSellers () {
@@ -258,6 +323,7 @@ export default {
         this.sellers = response.data
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     addProduct () {
@@ -279,16 +345,12 @@ export default {
       this.$http.post(this.API_ENDPOINT + '/admin/product', formData, {headers: { 'Content-Type': 'multipart/form-data' }}).then(response => {
         if (response.data.code === 'Success') {
           this.hideModal()
-          this.alertText = 'Product successfully added'
-          this.alertVariant = 'success'
-          this.alertVisible = true
-          window.setTimeout(() => {
-            this.alertVisible = false
-          }, 2000)
+          Events.$emit('alert', 'Product successfully added', 'success', true)
           this.getAllProducts()
         }
       }).catch(err => {
         console.log('this is an error ', err.response)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     deleteProduct () {
@@ -299,6 +361,7 @@ export default {
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     }
   },
@@ -309,12 +372,3 @@ export default {
   }
 }
 </script>
-<style>
-  .position-alert{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 20000
-  }
-</style>

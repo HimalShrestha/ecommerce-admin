@@ -28,11 +28,14 @@
     <button class="navbar-toggler aside-menu-toggler d-md-down-none" type="button" @click="asideToggle">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <!-- <b-alert variant="danger"
-             dismissible
-             :show="true">
-      Dismissible Alert!
-    </b-alert> -->
+    <div class="position-alert">
+      <b-alert :variant="alertVariant"
+               dismissible
+               :show="alertVisible"
+               @dismissed="alertVisible=false">
+        {{alertText}}
+      </b-alert>
+    </div>
   </header>
 </template>
 <script>
@@ -42,6 +45,13 @@
     name: 'c-header',
     components: {
       HeaderDropdown
+    },
+    data () {
+      return {
+        alertVariant: 'success',
+        alertVisible: false,
+        alertText: 'test'
+      }
     },
     methods: {
       sidebarToggle (e) {
@@ -60,8 +70,13 @@
         e.preventDefault()
         document.body.classList.toggle('aside-menu-hidden')
       },
-      alert (a, b) {
-        console.log(a, b)
+      alert (aText, aVariant, aVisible) {
+        this.alertText = aText
+        this.alertVariant = aVariant
+        this.alertVisible = aVisible
+        window.setTimeout(() => {
+          this.alertVisible = false
+        }, 3000)
       }
     },
     created () {
@@ -69,3 +84,12 @@
     }
   }
 </script>
+<style>
+.position-alert{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index: 20000
+}
+</style>

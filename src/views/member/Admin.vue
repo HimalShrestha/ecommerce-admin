@@ -34,39 +34,67 @@
           <b-col sm="12">
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.username.$error">
                   <label for="username">Username</label>
-                  <b-form-input type="text" id="username" placeholder="Enter Username" v-model="username"></b-form-input>
+                  <b-form-input type="text" id="username" :state="$v.username.$error?false:null || usernameInUse?false:null" placeholder="Enter Username" v-model.trim="username" @blur.native="$v.username.$touch" @input.native="usernameInUse=false"></b-form-input>
+                  <div v-if="$v.username.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.username.required">Username is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.username.minLength">Must have atleast {{ $v.username.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.username.maxLength">Must not exceed {{ $v.username.$params.maxLength.max}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.username.alphaNum">Must be only Alpha Numeric</div>
+                  </div>
+                  <div class="invalid-feedback d-block" v-if="usernameInUse">Username is already in use</div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.password.$error">
                   <label for="password">Password</label>
-                  <b-form-input type="text" id="password" placeholder="Enter Password" v-model="password"></b-form-input>
+                  <b-form-input type="text" id="password" :state="$v.password.$error?false:null" placeholder="Enter Password" v-model.trim="password" @blur.native="$v.password.$touch"></b-form-input>
+                  <div v-if="$v.password.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.password.required">Password is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.password.minLength">Must have atleast {{ $v.password.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.password.maxLength">Must not exceed {{ $v.password.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.fname.$error">
                   <label for="fname">Firstname</label>
-                  <b-form-input type="text" id="fname" placeholder="Enter Firstname" v-model="fname"></b-form-input>
+                  <b-form-input type="text" id="fname" :state="$v.fname.$error?false:null" placeholder="Enter Firstname" v-model.trim="fname" @blur.native="$v.fname.$touch"></b-form-input>
+                  <div v-if="$v.fname.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.fname.required">Firstname is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.fname.minLength">Must have atleast {{ $v.fname.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.fname.maxLength">Must not exceed {{ $v.fname.$params.maxLength.max}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.fname.alpha">Must be only Alphabet</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.lname.$error">
                   <label for="lname">Lastname</label>
-                  <b-form-input type="text" id="lname" placeholder="Enter Lastname" v-model="lname"></b-form-input>
+                  <b-form-input type="text" id="lname" :state="$v.lname.$error?false:null" placeholder="Enter Lastname" v-model.trim="lname" @blur.native="$v.lname.$touch"></b-form-input>
+                  <div v-if="$v.lname.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.lname.required">Lastname is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.lname.minLength">Must have atleast {{ $v.lname.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.lname.maxLength">Must not exceed {{ $v.lname.$params.maxLength.max}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.lname.alpha">Must be only Alphabet</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.email.$error">
                   <label for="email">Email</label>
-                  <b-form-input type="text" id="email" placeholder="Enter Email" v-model="email"></b-form-input>
+                  <b-form-input type="text" id="email" :state="$v.email.$error?false:null" placeholder="Enter Email" v-model.trim="email"  @blur.native="$v.email.$touch"></b-form-input>
+                  <div v-if="$v.email.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.email.required">Email is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.email.minLength">Must be valid email</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -75,13 +103,16 @@
                 <b-form-group label="Roles">
                   <b-form-checkbox-group stacked v-model="roles" name="flavour2" :options="rolesOptions">
                   </b-form-checkbox-group>
+                  <div class="invalid-feedback d-block" v-if="roles.length===0">Select atleast one role</div>
                 </b-form-group>
               </b-col>
             </b-row>
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="addAdmin">Add Admin</b-btn>
+      <!-- two same button below to tackle button disable on non  vuelidate element -->
+      <b-btn class="mt-3" variant="primary" @click="addAdmin" disabled v-if="roles.length===0">Add Admin</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="addAdmin" :disabled="isValid" v-else>Add Admin</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
     </b-modal>
 
@@ -97,33 +128,53 @@
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.changePassword.$error">
                   <label for="password">Password</label>
-                  <b-form-input type="text" id="password" placeholder="Enter Password to change" v-model="changePassword"></b-form-input>
+                  <b-form-input type="text" id="password" :state="$v.changePassword.$error?false:null" placeholder="Enter Password" v-model.trim="changePassword" @blur.native="$v.changePassword.$touch"></b-form-input>
+                  <div v-if="$v.changePassword.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.changePassword.minLength">Must have atleast {{ $v.changePassword.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.changePassword.maxLength">Must not exceed {{ $v.changePassword.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
-                  <label for="fname">Firstname</label>
-                  <b-form-input type="text" id="fname" placeholder="Enter Firstname" v-model="adminSingle.AdminFirstName"></b-form-input>
+                <b-form-group :state="!$v.adminSingle.AdminFirstName.$error">
+                  <label for="AdminFirstName">Firstname</label>
+                  <b-form-input type="text" id="AdminFirstName" :state="$v.adminSingle.AdminFirstName.$error?false:null" placeholder="Enter Firstname" v-model.trim="adminSingle.AdminFirstName" @blur.native="$v.adminSingle.AdminFirstName.$touch"></b-form-input>
+                  <div v-if="$v.adminSingle.AdminFirstName.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.adminSingle.AdminFirstName.required">Firstname is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.adminSingle.AdminFirstName.minLength">Must have atleast {{ $v.adminSingle.AdminFirstName.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.adminSingle.AdminFirstName.maxLength">Must not exceed {{ $v.adminSingle.AdminFirstName.$params.maxLength.max}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.adminSingle.AdminFirstName.alpha">Must be only Alphabet</div>
+                  </div>
                 </b-form-group>
               </b-col>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.adminSingle.AdminLastName.$error">
                   <label for="lname">Lastname</label>
-                  <b-form-input type="text" id="lname" placeholder="Enter Lastname" v-model="adminSingle.AdminLastName"></b-form-input>
+                  <b-form-input type="text" id="lname" :state="$v.adminSingle.AdminLastName.$error?false:null" placeholder="Enter Lastname" v-model.trim="adminSingle.AdminLastName" @blur.native="$v.adminSingle.AdminLastName.$touch"></b-form-input>
+                  <div v-if="$v.adminSingle.AdminLastName.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.adminSingle.AdminLastName.required">Lastname is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.adminSingle.AdminLastName.minLength">Must have atleast {{ $v.adminSingle.AdminLastName.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.adminSingle.AdminLastName.maxLength">Must not exceed {{ $v.adminSingle.AdminLastName.$params.maxLength.max}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.adminSingle.AdminLastName.alpha">Must be only Alphabet</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col sm="6">
-                <b-form-group>
+                <b-form-group :state="!$v.adminSingle.AdminEmail.$error">
                   <label for="email">Email</label>
-                  <b-form-input type="text" id="email" placeholder="Enter Email" v-model="adminSingle.AdminEmail"></b-form-input>
+                  <b-form-input type="text" id="email" :state="$v.adminSingle.AdminEmail.$error?false:null" placeholder="Enter Email" v-model.trim="adminSingle.AdminEmail"  @blur.native="$v.adminSingle.AdminEmail.$touch"></b-form-input>
+                  <div v-if="$v.adminSingle.AdminEmail.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.adminSingle.AdminEmail.required">Email is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.adminSingle.AdminEmail.minLength">Must be valid email</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -132,13 +183,16 @@
                 <b-form-group label="Roles">
                   <b-form-checkbox-group stacked v-model="adminSingle.AdminRoles" name="flavour2" :options="rolesOptions">
                   </b-form-checkbox-group>
+                  <div class="invalid-feedback d-block" v-if="adminSingle.AdminRoles.length===0">Select atleast one role</div>
                 </b-form-group>
               </b-col>
             </b-row>
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="updateAdmin">Update</b-btn>
+      <!-- <b-btn class="mt-3" variant="primary" @click="updateAdmin">Update</b-btn> -->
+      <b-btn class="mt-3" variant="primary" @click="updateAdmin" disabled v-if="adminSingle.AdminRoles.length===0">Update</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="updateAdmin" :disabled="$v.adminSingle.$invalid" v-else>Update</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="closeEdit">Cancel</b-btn>
     </b-modal>
 
@@ -163,6 +217,7 @@
 
 <script>
 import {Events} from '../../events.js'
+const {required, minLength, alpha, maxLength, email, alphaNum} = require('vuelidate/lib/validators')
 export default {
   name: 'Admin',
   data () {
@@ -202,7 +257,31 @@ export default {
       deleteId: '',
       alertVariant: 'success',
       alertVisible: false,
-      alertText: 'test'
+      alertText: 'test',
+      usernameInUse: false
+    }
+  },
+  validations: {
+    username: { required, minLength: minLength(5), maxLength: maxLength(45), alphaNum },
+    password: { required, minLength: minLength(6), maxLength: maxLength(45) },
+    fname: { required, alpha, minLength: minLength(2), maxLength: maxLength(45) },
+    lname: { required, alpha, minLength: minLength(2), maxLength: maxLength(45) },
+    email: { required, email },
+    adminSingle: {
+      AdminUsername: { required, minLength: minLength(5), maxLength: maxLength(45), alphaNum },
+      AdminEmail: { required, email },
+      AdminFirstName: { required, alpha, minLength: minLength(2), maxLength: maxLength(45) },
+      AdminLastName: { required, alpha, minLength: minLength(2), maxLength: maxLength(45) }
+    },
+    changePassword: { minLength: minLength(6), maxLength: maxLength(45) }
+  },
+  computed: {
+    isValid () {
+      if (this.$v.username.$invalid || this.$v.password.$invalid || this.$v.fname.$invalid || this.$v.lname.$invalid || this.$v.email.$invalid) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
@@ -228,9 +307,11 @@ export default {
         if (response.data.code === 'Success') {
           this.getAllAdmins()
           this.closeEdit()
+          Events.$emit('alert', 'Admin successfully updated', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     editAdmin (id) {
@@ -241,6 +322,7 @@ export default {
         // this.adminSingle.AdminRoles = temp
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
       this.changePassword = ''
       this.$refs.editAdmin.show()
@@ -255,10 +337,6 @@ export default {
       this.$refs.confirm.show()
       this.deleteId = id
     },
-    makeAlert () {
-      this.$refs.confirm.show()
-      Events.$emit('alert', 'warning', 3000)
-    },
     showModal () {
       this.$refs.addAdmin.show()
     },
@@ -270,6 +348,7 @@ export default {
         this.admins = response.data
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     addAdmin () {
@@ -284,16 +363,18 @@ export default {
       this.$http.post(this.API_ENDPOINT + '/admin/member/register', body, {headers: { 'Content-Type': 'application/json' }}).then(response => {
         if (response.data.code === 'Success') {
           this.hideModal()
-          this.alertText = 'Admin successfully added'
-          this.alertVariant = 'success'
-          this.alertVisible = true
-          window.setTimeout(() => {
-            this.alertVisible = false
-          }, 2000)
           this.getAllAdmins()
+          Events.$emit('alert', 'Admin successfully added', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err.response)
+        Events.$emit('alert', err.response.data.errors, 'danger', true)
+        if (err.response.data.hasOwnProperty('username')) {
+          if (err.response.data.errors.username.msg === 'this username is already in use') {
+            this.usernameInUse = true
+          }
+        }
+        this.hideModal()
       })
     },
     deleteProduct () {
@@ -302,8 +383,10 @@ export default {
         if (response.data.code === 'Success') {
           this.getAllAdmins()
           this.cancelDelete()
+          Events.$emit('alert', 'Admin successfully deleted', 'success', true)
         }
       }).catch(err => {
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
         console.log('this is an error ', err)
       })
     }
@@ -313,12 +396,3 @@ export default {
   }
 }
 </script>
-<style>
-  .position-alert{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 20000
-  }
-</style>
