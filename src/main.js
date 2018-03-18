@@ -50,6 +50,17 @@ router.beforeEach((to, from, next) => {
   })
 })
 
+axios.interceptors.response.use(function (response) {
+  // Do something with response data
+  return response
+}, function (error) {
+  // Do something with response error
+  if (error.response.status === 401) {
+    window.location.href = '/'
+  }
+  return Promise.reject(error)
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

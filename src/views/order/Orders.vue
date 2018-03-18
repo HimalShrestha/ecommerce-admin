@@ -3,7 +3,7 @@
     <b-card no-body>
       <b-card-header>
         <h3 class="float-left">Orders</h3>
-        <b-button variant="primary" class="float-right" @click="showModal">Add Orders</b-button>
+        <!-- <b-button variant="primary" class="float-right" @click="showModal">Add Orders</b-button> -->
       </b-card-header>
       <b-card-body>
         <div class="orders">
@@ -30,7 +30,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Card footer</div>
+      <div slot="footer">Orders</div>
     </b-card>
     <b-modal ref="addProduct" size="lg" header-bg-variant="primary" hide-footer title="Add Product">
       <div class="d-block">

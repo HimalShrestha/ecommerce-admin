@@ -65,77 +65,123 @@
 
                       <b-row>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderEmail.$error">
                             <label for="orderEmail">Order Email</label>
-                            <b-form-input type="email" id="orderEmail" v-model="order.OrderEmail"></b-form-input>
+                            <b-form-input type="email" id="orderEmail" :state="$v.order.OrderEmail.$error?false:null" @blur.native="$v.order.OrderEmail.$touch" v-model.trim="order.OrderEmail"></b-form-input>
+                            <div v-if="$v.order.OrderEmail.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderEmail.required">Order Email is required</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderEmail.email">Must be valid email</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderAmount.$error">
                             <label for="orderAmount">Order Amount</label>
-                            <b-form-input type="number" id="orderAmount" v-model="order.OrderAmount"></b-form-input>
+                            <b-form-input type="number" id="orderAmount" :state="$v.order.OrderAmount.$error?false:null" @blur.native="$v.order.OrderAmount.$touch" v-model.trim="order.OrderAmount"></b-form-input>
+                            <div v-if="$v.order.OrderAmount.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderAmount.required">Order Amount is required</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderAmount.numeric">Must be number only</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderAmount.maxLength">Must not exceed {{ $v.order.OrderAmount.$params.maxLength.max}} number</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                       </b-row>
 
                       <b-row>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderPhone.$error">
                             <label for="orderPhone">Order Phone</label>
-                            <b-form-input type="text" id="orderPhone" v-model="order.OrderPhone"></b-form-input>
+                            <b-form-input type="text" id="orderPhone" :state="$v.order.OrderPhone.$error?false:null" @blur.native="$v.order.OrderPhone.$touch" v-model.trim="order.OrderPhone"></b-form-input>
+                            <div v-if="$v.order.OrderPhone.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderPhone.required">Phone is required</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderPhone.numeric">Must be number only</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderPhone.minLength">Must have atleast {{ $v.order.OrderPhone.$params.minLength.min}} number</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderPhone.maxLength">Must not exceed {{ $v.order.OrderPhone.$params.maxLength.max}} number</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderCountry.$error">
                             <label for="ordercountry">Order Country</label>
-                            <b-form-input type="text" id="ordercountry" v-model="order.OrderCountry"></b-form-input>
+                            <b-form-input type="text" id="ordercountry" :state="$v.order.OrderCountry.$error?false:null" @blur.native="$v.order.OrderCountry.$touch" v-model.trim="order.OrderCountry"></b-form-input>
+                            <div v-if="$v.order.OrderCountry.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderCountry.required">Country is required</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderCountry.minLength">Must have atleast {{ $v.order.OrderCountry.$params.minLength.min}} letter</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderCountry.maxLength">Must not exceed {{ $v.order.OrderCountry.$params.maxLength.max}} letter</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                       </b-row>
 
                       <b-row>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderShipAddress.$error">
                             <label for="address">Address</label>
                             <b-form-textarea id="address"
-                                             v-model="order.OrderShipAddress"
+                                             v-model.trim="order.OrderShipAddress"
                                              placeholder="Address.."
                                              :rows="3"
-                                             :max-rows="6">
+                                             :max-rows="6"
+                                             :state="$v.order.OrderShipAddress.$error?false:null" @blur.native="$v.order.OrderShipAddress.$touch">
                             </b-form-textarea>
+                            <div v-if="$v.order.OrderShipAddress.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderShipAddress.required">Ship Address is required</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderShipAddress.minLength">Must have atleast {{ $v.order.OrderShipAddress.$params.minLength.min}} letter</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderShipAddress.maxLength">Must not exceed {{ $v.order.OrderShipAddress.$params.maxLength.max}} letter</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderShipAddress2.$error">
                             <label for="address2">Address 2</label>
                             <b-form-textarea id="address2"
-                                             v-model="order.OrderShipAddress2"
+                                             v-model.trim="order.OrderShipAddress2"
                                              placeholder="Address 2.."
                                              :rows="3"
-                                             :max-rows="6">
+                                             :max-rows="6"
+                                             :state="$v.order.OrderShipAddress2.$error?false:null" @blur.native="$v.order.OrderShipAddress2.$touch">
                             </b-form-textarea>
+                            <div v-if="$v.order.OrderShipAddress2.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderShipAddress2.minLength">Must have atleast {{ $v.order.OrderShipAddress2.$params.minLength.min}} letter</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderShipAddress2.maxLength">Must not exceed {{ $v.order.OrderShipAddress2.$params.maxLength.max}} letter</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderState.$error">
                             <label for="orderState">Order State</label>
-                            <b-form-input type="text" id="orderState" v-model="order.OrderState"></b-form-input>
+                            <b-form-input type="text" id="orderState" :state="$v.order.OrderState.$error?false:null" @blur.native="$v.order.OrderState.$touch" v-model.trim="order.OrderState"></b-form-input>
+                            <div v-if="$v.order.OrderState.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderState.required">State is required</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderState.minLength">Must have atleast {{ $v.order.OrderState.$params.minLength.min}} letter</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderState.maxLength">Must not exceed {{ $v.order.OrderState.$params.maxLength.max}} letter</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderCity.$error">
                             <label for="orderCity">Order City</label>
-                            <b-form-input type="text" id="orderCity" v-model="order.OrderCity"></b-form-input>
+                            <b-form-input type="text" id="orderCity" :state="$v.order.OrderCity.$error?false:null" @blur.native="$v.order.OrderCity.$touch" v-model.trim="order.OrderCity"></b-form-input>
+                            <div v-if="$v.order.OrderCity.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderCity.required">City is required</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderCity.minLength">Must have atleast {{ $v.order.OrderCity.$params.minLength.min}} letter</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderCity.maxLength">Must not exceed {{ $v.order.OrderCity.$params.maxLength.max}} letter</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col sm="6">
-                          <b-form-group>
+                          <b-form-group :state="!$v.order.OrderZip.$error">
                             <label for="orderZip">Order Zip</label>
-                            <b-form-input type="text" id="orderZip" v-model="order.OrderZip"></b-form-input>
+                            <b-form-input type="text" id="orderZip" :state="$v.order.OrderZip.$error?false:null" @blur.native="$v.order.OrderZip.$touch" v-model.trim="order.OrderZip"></b-form-input>
+                            <div v-if="$v.order.OrderZip.$error">
+                              <div class="invalid-feedback d-block" v-if="!$v.order.OrderZip.numeric">Must be number only</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderZip.minLength">Must have atleast {{ $v.order.OrderZip.$params.minLength.min}} number</div>
+                              <div class="invalid-feedback d-block" v-else-if="!$v.order.OrderZip.maxLength">Must not exceed {{ $v.order.OrderZip.$params.maxLength.max}} number</div>
+                            </div>
                           </b-form-group>
                         </b-col>
                       </b-row>
@@ -217,7 +263,8 @@
 </template>
 
 <script>
-// import {Events} from '../../events.js'
+import {Events} from '../../events.js'
+const {required, numeric, minLength, maxLength, email} = require('vuelidate/lib/validators')
 export default {
   name: 'OrderSingle',
   data () {
@@ -225,15 +272,19 @@ export default {
       orderDetail: '',
       order: '',
       product: ''
-      // product: '',
-      // category: [],
-      // selectedCategory: null,
-      // sellers: [],
-      // selectedSeller: null,
-      // productActive: true,
-      // alertVariant: 'success',
-      // alertVisible: false,
-      // alertText: 'test'
+    }
+  },
+  validations: {
+    order: {
+      OrderAmount: { required, numeric, maxLength: maxLength(20) },
+      OrderCity: { required, minLength: minLength(2), maxLength: maxLength(50) },
+      OrderCountry: { required, minLength: minLength(2), maxLength: maxLength(50) },
+      OrderEmail: { required, email },
+      OrderPhone: { required, numeric, minLength: minLength(10), maxLength: maxLength(20) },
+      OrderShipAddress: { required, minLength: minLength(2), maxLength: maxLength(100) },
+      OrderShipAddress2: { minLength: minLength(2), maxLength: maxLength(100) },
+      OrderState: { required, minLength: minLength(2), maxLength: maxLength(50) },
+      OrderZip: { numeric, minLength: minLength(2), maxLength: maxLength(20) }
     }
   },
   methods: {
@@ -291,9 +342,11 @@ export default {
         if (response.data.code === 'Success') {
           this.$refs.info.show()
           this.getOrderDetail()
+          Events.$emit('alert', 'Order Updated', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     }
 

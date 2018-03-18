@@ -34,16 +34,21 @@
           <b-col sm="12">
             <b-row>
               <b-col sm="12">
-                <b-form-group>
+                <b-form-group :state="!$v.categoryName.$error">
                   <label for="cat">Category Name</label>
-                  <b-form-input type="text" id="cat" placeholder="Enter Category Name" v-model="categoryName"></b-form-input>
+                  <b-form-input type="text" id="cat" placeholder="Enter Category Name" v-model.trim="categoryName" :state="$v.categoryName.$error?false:null" @focus.native="$v.categoryName.$touch"></b-form-input>
+                  <div v-if="$v.categoryName.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.categoryName.required">Category name is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.categoryName.minLength">Must have atleast {{ $v.categoryName.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.categoryName.maxLength">Must not exceed {{ $v.categoryName.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="addCategory">Add Category</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="addCategory" :disabled="$v.$invalid">Add Category</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
     </b-modal>
     <b-modal ref="editCategory" size="lg" header-bg-variant="primary" hide-footer title="Edit Category">
@@ -52,16 +57,21 @@
           <b-col sm="12">
             <b-row>
               <b-col sm="12">
-                <b-form-group>
+                <b-form-group :state="!$v.categoryName.$error">
                   <label for="cat">Category Name</label>
-                  <b-form-input type="text" id="cat" placeholder="Enter Category Name" v-model="categoryName"></b-form-input>
+                  <b-form-input type="text" id="cat" placeholder="Enter Category Name" v-model.trim="categoryName" :state="$v.categoryName.$error?false:null" @focus.native="$v.categoryName.$touch"></b-form-input>
+                  <div v-if="$v.categoryName.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.categoryName.required">Category name is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.categoryName.minLength">Must have atleast {{ $v.categoryName.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.categoryName.maxLength">Must not exceed {{ $v.categoryName.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="updateCategory">Update</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="updateCategory" :disabled="$v.$invalid">Update</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="closeEdit">Cancel</b-btn>
     </b-modal>
     <b-modal ref="confirm" size="sm" centered header-bg-variant="primary" hide-footer title="Alert">
@@ -71,20 +81,13 @@
       <b-button variant="success" @click="deleteCategory">Yes</b-button>
       <b-button variant="outline-danger" @click="cancelDelete">Cancel</b-button>
     </b-modal>
-    <div class="position-alert">
-      <b-alert :variant="alertVariant"
-               dismissible
-               :show="alertVisible"
-               @dismissed="alertVisible=false">
-        {{alertText}}
-      </b-alert>
-    </div>
 
   </div>
 </template>
 
 <script>
 import {Events} from '../../events.js'
+const {required, minLength, maxLength} = require('vuelidate/lib/validators')
 export default {
   name: 'Category',
   data () {
@@ -98,11 +101,11 @@ export default {
       category: [],
       categoryName: '',
       categoryId: '',
-      deleteId: '',
-      alertVariant: 'success',
-      alertVisible: false,
-      alertText: 'test'
+      deleteId: ''
     }
+  },
+  validations: {
+    categoryName: { required, minLength: minLength(2), maxLength: maxLength(100) }
   },
   methods: {
     updateCategory () {
@@ -110,9 +113,11 @@ export default {
         if (response.data.code === 'Success') {
           this.getCategories()
           this.closeEdit()
+          Events.$emit('alert', 'Category Updated', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     editCategory (id) {
@@ -134,10 +139,6 @@ export default {
       this.$refs.confirm.show()
       this.deleteId = id
     },
-    makeAlert () {
-      this.$refs.confirm.show()
-      Events.$emit('alert', 'warning', 3000)
-    },
     showModal () {
       this.$refs.addCategory.show()
     },
@@ -149,6 +150,7 @@ export default {
         this.category = response.data
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     addCategory () {
@@ -158,16 +160,12 @@ export default {
       this.$http.post(this.API_ENDPOINT + '/admin/product/category', body, {headers: { 'Content-Type': 'application/json' }}).then(response => {
         if (response.data.code === 'Success') {
           this.hideModal()
-          this.alertText = 'Category successfully added'
-          this.alertVariant = 'success'
-          this.alertVisible = true
-          window.setTimeout(() => {
-            this.alertVisible = false
-          }, 2000)
           this.getCategories()
+          Events.$emit('alert', 'Category Added', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err.response)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     deleteCategory () {
@@ -176,9 +174,11 @@ export default {
         if (response.data.code === 'Success') {
           this.getCategories()
           this.cancelDelete()
+          Events.$emit('alert', 'Category Deleted', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     }
   },
@@ -189,12 +189,3 @@ export default {
   }
 }
 </script>
-<style>
-  .position-alert{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 20000
-  }
-</style>

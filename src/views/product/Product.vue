@@ -180,22 +180,34 @@
             </b-row>
             <b-row>
               <b-col sm="6">
-                <label for="Image" style="width:100%">Product Image</label>
-                <!-- <croppa ref="mainImage" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="Image"></croppa> -->
-                <!-- <input type="file"  accept="image/*"> -->
-                <b-form-file v-model="mainImage" ref="mainImage" :state="!$v.mainImage.$invalid" @blur.native="$v.mainImage.$touch" placeholder="Choose an image..." accept="image/*"></b-form-file>
-                <div v-if="$v.mainImage.$invalid">
-                  <div class="invalid-feedback d-block" v-if="!$v.mainImage.required">Image is required</div>
-                </div>
+                <b-form-group :state="!$v.mainImage.$error">
+                  <label for="Image" style="width:100%">Product Image</label>
+                  <!-- <croppa ref="mainImage" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="Image"></croppa> -->
+                  <!-- <input type="file"  accept="image/*"> -->
+                  <b-form-file v-model="mainImage" ref="mainImage" placeholder="Replace image..." accept="image/*"
+                  :state="$v.mainImage.$error?false:null"
+                  @click.native="$v.mainImage.$touch"
+                  ></b-form-file>
+                  <div v-if="$v.mainImage.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.mainImage.required">Image is required</div>
+                    <div class="invalid-feedback d-block" v-if="!$v.mainImage.size.maxValue">Must be less than {{ ($v.mainImage.size.$params.maxValue.max)/(1024*1024)}} MB</div>
+                  </div>
+                </b-form-group>
               </b-col>
               <b-col sm="6">
-                <label for="thumb" style="width:100%">Thumbnail</label>
-                <!-- <croppa ref="thumbnail" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="thumb"></croppa> -->
-                <!-- <input type="file" ref="thumbnail" accept="image/*"> -->
-                <b-form-file v-model="thumbnail" ref="thumbnail" :state="!$v.thumbnail.$invalid" @blur.native="$v.thumbnail.$touch" placeholder="Choose an image..." accept="image/*"></b-form-file>
-                <div v-if="$v.thumbnail.$invalid">
-                  <div class="invalid-feedback d-block" v-if="!$v.thumbnail.required">Thumbnail is required</div>
-                </div>
+                <b-form-group :state="!$v.thumbnail.size.$error">
+                  <label for="thumb" style="width:100%">Product Thumbnail</label>
+                  <!-- <croppa ref="thumbnail" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="thumb"></croppa> -->
+                  <!-- <input type="file" ref="thumbnail" accept="image/*"> -->
+                  <b-form-file v-model="thumbnail" ref="thumbnail" placeholder="Replace Thumbnail..." accept="image/*"
+                  :state="$v.thumbnail.$error?false:null"
+                  @click.native="$v.thumbnail.$touch"
+                  ></b-form-file>
+                  <div v-if="$v.thumbnail.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.thumbnail.required">Thumbnail is required</div>
+                    <div class="invalid-feedback d-block" v-if="!$v.thumbnail.size.maxValue">Must be less than {{ ($v.thumbnail.size.$params.maxValue.max)/(1024*1024)}} MB</div>
+                  </div>
+                </b-form-group>
               </b-col>
             </b-row>
             <b-row>&nbsp;</b-row>
@@ -237,7 +249,7 @@
 <script>
 import cSwitch from '../../components/Switch'
 import {Events} from '../../events.js'
-const {required, numeric, minLength, maxLength} = require('vuelidate/lib/validators')
+const {required, numeric, minLength, maxLength, maxValue} = require('vuelidate/lib/validators')
 export default {
   name: 'Product',
   components: {
@@ -285,8 +297,14 @@ export default {
     cartDesc: { required, minLength: minLength(2), maxLength: maxLength(250) },
     shortDesc: { required, minLength: minLength(2), maxLength: maxLength(1000) },
     longDesc: { required, minLength: minLength(2), maxLength: maxLength(5000) },
-    mainImage: {required},
-    thumbnail: {required}
+    mainImage: {
+      required,
+      size: { maxValue: maxValue(2 * 1024 * 1024) }
+    },
+    thumbnail: {
+      required,
+      size: { maxValue: maxValue(2 * 1024 * 1024) }
+    }
   },
   methods: {
     cancelDelete () {
@@ -328,10 +346,8 @@ export default {
     },
     addProduct () {
       var formData = new FormData()
-      var productImage = this.$refs.mainImage.files[0]
-      var thumbnail = this.$refs.thumbnail.files[0]
-      formData.append('productImage', productImage)
-      formData.append('thumbnail', thumbnail)
+      formData.append('productImage', this.productImage)
+      formData.append('thumbnail', this.thumbnail)
       formData.append('name', this.name)
       formData.append('price', this.price)
       formData.append('location', this.location)
