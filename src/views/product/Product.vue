@@ -184,7 +184,7 @@
                   <label for="Image" style="width:100%">Product Image</label>
                   <!-- <croppa ref="mainImage" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="Image"></croppa> -->
                   <!-- <input type="file"  accept="image/*"> -->
-                  <b-form-file v-model="mainImage" ref="mainImage" placeholder="Replace image..." accept="image/*"
+                  <b-form-file v-model="mainImage" ref="mainImage" placeholder="Upload image..." accept="image/*"
                   :state="$v.mainImage.$error?false:null"
                   @click.native="$v.mainImage.$touch"
                   ></b-form-file>
@@ -199,7 +199,7 @@
                   <label for="thumb" style="width:100%">Product Thumbnail</label>
                   <!-- <croppa ref="thumbnail" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="thumb"></croppa> -->
                   <!-- <input type="file" ref="thumbnail" accept="image/*"> -->
-                  <b-form-file v-model="thumbnail" ref="thumbnail" placeholder="Replace Thumbnail..." accept="image/*"
+                  <b-form-file v-model="thumbnail" ref="thumbnail" placeholder="Upload Thumbnail..." accept="image/*"
                   :state="$v.thumbnail.$error?false:null"
                   @click.native="$v.thumbnail.$touch"
                   ></b-form-file>
@@ -345,8 +345,9 @@ export default {
       })
     },
     addProduct () {
+      console.log(this.thumbnail)
       var formData = new FormData()
-      formData.append('productImage', this.productImage)
+      formData.append('productImage', this.mainImage)
       formData.append('thumbnail', this.thumbnail)
       formData.append('name', this.name)
       formData.append('price', this.price)

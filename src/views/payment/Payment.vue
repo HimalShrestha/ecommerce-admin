@@ -31,16 +31,21 @@
           <b-col sm="12">
             <b-row>
               <b-col sm="12">
-                <b-form-group>
+                <b-form-group :state="!$v.paymentType.$error">
                   <label for="mName">Payment Type</label>
-                  <b-form-input type="text" id="mName" placeholder="Enter Method Name" v-model="paymentType"></b-form-input>
+                  <b-form-input type="text" id="mName" :state="$v.paymentType.$error?false:null" @blur.native="$v.paymentType.$touch" placeholder="Enter Method Name" v-model.trim="paymentType" @input="alreadyExists=false"></b-form-input>
+                  <div v-if="$v.paymentType.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.paymentType.required">Payment is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.paymentType.maxLength">Must not exceed {{ $v.paymentType.$params.maxLength.max}} letters</div>
+                  </div>
+                  <div class="invalid-feedback d-block" v-if="alreadyExists">Payment already exists</div>
                 </b-form-group>
               </b-col>
             </b-row>
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="addMethod">Add Method</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="addMethod" :disabled="$v.$invalid">Add Method</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
     </b-modal>
     <b-modal ref="editMethod" size="lg" header-bg-variant="primary" hide-footer title="Edit Method">
@@ -49,16 +54,21 @@
           <b-col sm="12">
             <b-row>
               <b-col sm="12">
-                <b-form-group>
-                  <label for="metName">Method Name</label>
-                  <b-form-input type="text" id="metName" placeholder="Enter Method Name" v-model="paymentType"></b-form-input>
+                <b-form-group :state="!$v.paymentType.$error">
+                  <label for="mtName">Payment Type</label>
+                  <b-form-input type="text" id="mtName" :state="$v.paymentType.$error?false:null" @blur.native="$v.paymentType.$touch" placeholder="Enter Method Name" v-model.trim="paymentType" @input="alreadyExists=false"></b-form-input>
+                  <div v-if="$v.paymentType.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.paymentType.required">Payment is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.paymentType.maxLength">Must not exceed {{ $v.paymentType.$params.maxLength.max}} letters</div>
+                  </div>
+                  <div class="invalid-feedback d-block" v-if="alreadyExists">Payment already exists</div>
                 </b-form-group>
               </b-col>
             </b-row>
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="updateMethod">Update</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="updateMethod" :disabled="$v.$invalid">Update</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="closeEdit">Cancel</b-btn>
     </b-modal>
     <b-modal ref="confirm" size="sm" centered header-bg-variant="primary" hide-footer title="Alert">
@@ -68,20 +78,13 @@
       <b-button variant="success" @click="deleteMethod">Yes</b-button>
       <b-button variant="outline-danger" @click="cancelDelete">Cancel</b-button>
     </b-modal>
-    <div class="position-alert">
-      <b-alert :variant="alertVariant"
-               dismissible
-               :show="alertVisible"
-               @dismissed="alertVisible=false">
-        {{alertText}}
-      </b-alert>
-    </div>
 
   </div>
 </template>
 
 <script>
 import {Events} from '../../events.js'
+const {required, maxLength} = require('vuelidate/lib/validators')
 export default {
   name: 'Category',
   data () {
@@ -96,10 +99,11 @@ export default {
       paymentType: '',
       methodId: '',
       deleteId: '',
-      alertVariant: 'success',
-      alertVisible: false,
-      alertText: 'test'
+      alreadyExists: false
     }
+  },
+  validations: {
+    paymentType: { required, maxLength: maxLength(20) }
   },
   methods: {
     updateMethod () {
@@ -107,9 +111,13 @@ export default {
         if (response.data.code === 'Success') {
           this.getMethods()
           this.closeEdit()
+          Events.$emit('alert', 'Payment Type updated', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        if (err.response.data.errors.paymentType.msg === 'type.already.exist') {
+          this.alreadyExists = true
+        }
       })
     },
     editMethod (id) {
@@ -131,10 +139,6 @@ export default {
       this.$refs.confirm.show()
       this.deleteId = id
     },
-    makeAlert () {
-      this.$refs.confirm.show()
-      Events.$emit('alert', 'warning', 3000)
-    },
     showModal () {
       this.$refs.addMethod.show()
     },
@@ -155,16 +159,14 @@ export default {
       this.$http.post(this.API_ENDPOINT + '/admin/payment', body, {headers: { 'Content-Type': 'application/json' }}).then(response => {
         if (response.data.code === 'Success') {
           this.hideModal()
-          this.alertText = 'Method successfully added'
-          this.alertVariant = 'success'
-          this.alertVisible = true
-          window.setTimeout(() => {
-            this.alertVisible = false
-          }, 2000)
           this.getMethods()
+          Events.$emit('alert', 'Payment Type Added', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err.response)
+        if (err.response.data.errors.paymentType.msg === 'type.already.exist') {
+          this.alreadyExists = true
+        }
       })
     },
     deleteMethod () {
@@ -173,9 +175,11 @@ export default {
         if (response.data.code === 'Success') {
           this.getMethods()
           this.cancelDelete()
+          Events.$emit('alert', 'Deleted', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     }
   },
@@ -186,12 +190,3 @@ export default {
   }
 }
 </script>
-<style>
-  .position-alert{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 20000
-  }
-</style>

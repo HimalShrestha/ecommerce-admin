@@ -89,6 +89,7 @@ export default {
         }
         this.$http.post(this.API_ENDPOINT + '/admin/auth/login/admin', body, {headers: { 'Content-Type': 'application/json' }}).then(response => {
           window.sessionStorage.setItem('user', JSON.stringify(response.data))
+          console.log(response.data)
           window.location.href = '/'
         }).catch(err => {
           this.wrongCrud = true

@@ -34,22 +34,39 @@
           <b-col sm="12">
             <b-row>
               <b-col sm="12">
-                <label for="postImage" style="width:100%">Image</label>
-                <!-- <croppa ref="thumbnail" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="thumb"></croppa> -->
-                <input type="file" id="postImage" ref="image" @change="showImage" accept="image/*"/>
+                <!-- <label for="postImage" style="width:100%">Image</label>
+                <croppa ref="thumbnail" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="thumb"></croppa>
+                <input type="file" id="postImage" ref="image" @change="showImage" accept="image/*"/> -->
+                <b-form-group :state="!$v.image.$error">
+                  <label for="Image" style="width:100%">Image</label>
+                  <b-form-file v-model="image" ref="image" placeholder="Upload image..." accept="image/*"
+                  :state="$v.image.$error?false:null"
+                  @click.native="$v.image.$touch"
+                  @input="showImage"
+                  ></b-form-file>
+                  <div v-if="$v.image.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.image.required">Image is required</div>
+                    <div class="invalid-feedback d-block" v-if="!$v.image.size.maxValue">Must be less than {{ ($v.image.size.$params.maxValue.max)/(1024*1024)}} MB</div>
+                  </div>
+                </b-form-group>
               </b-col>
               <b-col sm="12">
                 <img :src="imageURL" alt="" style="max-width:300px;">
               </b-col>
               <b-col sm="12">
-                <b-form-group>
+                <b-form-group :state="!$v.imageDesc.$error">
                   <label for="carDesc">Description</label>
-                  <b-form-textarea id="carDesc"
-                                   v-model="imageDesc"
+                  <b-form-textarea id="carDesc" :state="$v.imageDesc.$error?false:null" @blur.native="$v.imageDesc.$touch"
+                                   v-model.trim="imageDesc"
                                    placeholder="Enter Image Description here...."
                                    :rows="3"
                                    :max-rows="3">
                   </b-form-textarea>
+                  <div v-if="$v.imageDesc.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.imageDesc.required">Description is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.imageDesc.minLength">Must have atleast {{ $v.imageDesc.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.imageDesc.maxLength">Must not exceed {{ $v.imageDesc.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -61,7 +78,7 @@
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="addCarousel">Add Carousel</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="addCarousel" :disabled="isValid">Add Carousel</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Cancel</b-btn>
     </b-modal>
     <b-modal ref="editCarousel" size="lg" header-bg-variant="primary" hide-footer title="Edit Carousel">
@@ -70,22 +87,41 @@
           <b-col sm="12">
             <b-row>
               <b-col sm="12">
-                <label for="putImage" style="width:100%">Image</label>
-                <!-- <croppa ref="thumbnail" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="thumb"></croppa> -->
-                <input type="file" id="putImage" ref="putImage" @change="putShowImage" accept="image/*" />
+                <!-- <label for="putImage" style="width:100%">Image</label>
+                <croppa ref="thumbnail" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="thumb"></croppa>
+                <input type="file" id="putImage" ref="putImage" @change="putShowImage" accept="image/*" /> -->
+                <b-form-group :state="!$v.putImage.$error">
+                  <label for="Image" style="width:100%">Image</label>
+                  <!-- <croppa ref="mainImage" :accept="'image/*'" :file-size-limit="0" :width="200" :height="100" id="Image"></croppa> -->
+                  <!-- <input type="file"  accept="image/*"> -->
+                  <b-form-file v-model="putImage" ref="putImage" placeholder="Upload image..." accept="image/*"
+                  :state="$v.putImage.$error?false:null"
+                  @click.native="$v.putImage.$touch"
+                  @input="putShowImage"
+                  ></b-form-file>
+                  <div v-if="$v.putImage.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.putImage.required">Image is required</div>
+                    <div class="invalid-feedback d-block" v-if="!$v.putImage.size.maxValue">Must be less than {{ ($v.putImage.size.$params.maxValue.max)/(1024*1024)}} MB</div>
+                  </div>
+                </b-form-group>
               </b-col>
               <b-col sm="12">
                 <img :src="imageURL" alt="" style="max-width:300px;">
               </b-col>
               <b-col sm="12">
-                <b-form-group>
+                <b-form-group :state="!$v.carouselSingle.CarouselDesc.$error">
                   <label for="carDesc">Description</label>
-                  <b-form-textarea id="carDesc"
-                                   v-model="carouselSingle.CarouselDesc"
+                  <b-form-textarea id="carDesc" :state="$v.carouselSingle.CarouselDesc.$error?false:null" @blur.native="$v.carouselSingle.CarouselDesc.$touch"
+                                   v-model.trim="carouselSingle.CarouselDesc"
                                    placeholder="Enter Image Description here...."
                                    :rows="3"
                                    :max-rows="3">
                   </b-form-textarea>
+                  <div v-if="$v.carouselSingle.CarouselDesc.$error">
+                    <div class="invalid-feedback d-block" v-if="!$v.carouselSingle.CarouselDesc.required">Description is required</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.carouselSingle.CarouselDesc.minLength">Must have atleast {{ $v.carouselSingle.CarouselDesc.$params.minLength.min}} letters</div>
+                    <div class="invalid-feedback d-block" v-else-if="!$v.carouselSingle.CarouselDesc.maxLength">Must not exceed {{ $v.carouselSingle.CarouselDesc.$params.maxLength.max}} letters</div>
+                  </div>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -97,7 +133,7 @@
           </b-col>
         </b-row>
       </div>
-      <b-btn class="mt-3" variant="primary" @click="updateCarousel">Update</b-btn>
+      <b-btn class="mt-3" variant="primary" @click="updateCarousel" :disabled="$v.carouselSingle.$invalid">Update</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="closeEdit">Cancel</b-btn>
     </b-modal>
     <b-modal ref="confirm" size="sm" centered header-bg-variant="primary" hide-footer title="Alert">
@@ -107,14 +143,6 @@
       <b-button variant="success" @click="deleteCarousel">Yes</b-button>
       <b-button variant="outline-danger" @click="cancelDelete">Cancel</b-button>
     </b-modal>
-    <div class="position-alert">
-      <b-alert :variant="alertVariant"
-               dismissible
-               :show="alertVisible"
-               @dismissed="alertVisible=false">
-        {{alertText}}
-      </b-alert>
-    </div>
 
   </div>
 </template>
@@ -122,6 +150,7 @@
 <script>
 import cSwitch from '../../components/Switch'
 import {Events} from '../../events.js'
+const {required, minLength, maxLength, maxValue} = require('vuelidate/lib/validators')
 export default {
   name: 'Carousel',
   components: {
@@ -142,20 +171,37 @@ export default {
       status: true,
       carouselSingle: '',
       putStatus: '',
-      selectedSeller: '',
-      sellerName: '',
-      sellerDescription: '',
-      accountNumber: '',
-      accountName: '',
       deleteId: '',
-      alertVariant: 'success',
-      alertVisible: false,
-      alertText: 'test'
+      image: '',
+      putImage: ''
+    }
+  },
+  validations: {
+    imageDesc: { required, minLength: minLength(2), maxLength: maxLength(45) },
+    image: {
+      required,
+      size: { maxValue: maxValue(2 * 1024 * 1024) }
+    },
+    putImage: {
+      required,
+      size: { maxValue: maxValue(2 * 1024 * 1024) }
+    },
+    carouselSingle: {
+      CarouselDesc: { required, minLength: minLength(2), maxLength: maxLength(45) }
+    }
+  },
+  computed: {
+    isValid () {
+      if (this.$v.image.$invalid || this.$v.imageDesc.$invalid) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
     putShowImage () {
-      var image = this.$refs.putImage.files[0]
+      var image = this.putImage
       var reader = new FileReader()
       reader.onloadend = () => {
         this.imageURL = reader.result
@@ -163,17 +209,17 @@ export default {
       reader.readAsDataURL(image)
     },
     showImage () {
-      var image = this.$refs.image.files[0]
+      var img = this.image
       var reader = new FileReader()
       reader.onloadend = () => {
         this.imageURL = reader.result
       }
-      reader.readAsDataURL(image)
+      reader.readAsDataURL(img)
     },
     updateCarousel () {
       var body = new FormData()
-      var image = this.$refs.putImage.files[0]
-      if (image !== undefined) {
+      var image = this.putImage
+      if (image !== '') {
         body.append('image', image)
       }
       body.append('imageDesc', this.carouselSingle.CarouselDesc)
@@ -182,9 +228,11 @@ export default {
         if (response.data.code === 'Success') {
           this.getCarousels()
           this.closeEdit()
+          Events.$emit('alert', 'Image Updated', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     editCarousel (id) {
@@ -211,10 +259,6 @@ export default {
       this.$refs.confirm.show()
       this.deleteId = id
     },
-    makeAlert () {
-      this.$refs.confirm.show()
-      Events.$emit('alert', 'warning', 3000)
-    },
     showModal () {
       this.imageDesc = ''
       this.imageURL = ''
@@ -233,23 +277,19 @@ export default {
     },
     addCarousel () {
       var body = new FormData()
-      var image = this.$refs.image.files[0]
+      var image = this.image
       body.append('image', image)
       body.append('imageDesc', this.imageDesc)
       body.append('status', this.status ? 1 : 0)
       this.$http.post(this.API_ENDPOINT + '/admin/carousel', body, {headers: { 'Content-Type': 'multipart/form-data' }}).then(response => {
         if (response.data.code === 'Success') {
           this.hideModal()
-          this.alertText = 'Carousel successfully added'
-          this.alertVariant = 'success'
-          this.alertVisible = true
-          window.setTimeout(() => {
-            this.alertVisible = false
-          }, 2000)
           this.getCarousels()
+          Events.$emit('alert', 'Image Added', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err.response)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     },
     deleteCarousel () {
@@ -258,9 +298,11 @@ export default {
         if (response.data.code === 'Success') {
           this.getCarousels()
           this.cancelDelete()
+          Events.$emit('alert', 'Image Deleted', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err)
+        Events.$emit('alert', 'Something went wrong', 'danger', true)
       })
     }
   },
@@ -271,12 +313,3 @@ export default {
   }
 }
 </script>
-<style>
-  .position-alert{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 20000
-  }
-</style>
