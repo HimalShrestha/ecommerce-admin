@@ -71,6 +71,11 @@ export default {
       name: 'Message',
       url: '/message',
       icon: 'icon-envelope'
+    },
+    {
+      name: 'Subscriber',
+      url: '/subscriber',
+      icon: 'icon-heart'
     }
     // {
     //   title: true,

@@ -64,7 +64,8 @@ import Carousel from '@/views/carousel/Carousel'
 import Admin from '@/views/member/Admin'
 import User from '@/views/member/User'
 import Payment from '@/views/payment/Payment'
-import Message from '@/views/message/Message'
+import Message from '@/views/info/Message'
+import Subscriber from '@/views/info/Subscriber'
 
 Vue.use(Router)
 
@@ -140,6 +141,11 @@ export default new Router({
           path: 'message',
           name: 'Message',
           component: Message
+        },
+        {
+          path: 'subscriber',
+          name: 'Subscriber',
+          component: Subscriber
         },
         // {
         //   path: 'product',

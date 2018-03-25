@@ -11,7 +11,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="seller" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="option" slot-scope="data">
                   <b-button variant="warning" @click="editSeller(data.item.SellerID)">Edit</b-button>
@@ -23,7 +23,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Sellers</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <b-modal ref="addSeller" size="lg" header-bg-variant="primary" hide-footer title="Add Seller">
       <div class="d-block">
@@ -191,7 +191,9 @@ export default {
       sellerDescription: '',
       accountNumber: '',
       accountName: '',
-      deleteId: ''
+      deleteId: '',
+      currentPage: 1,
+      count: 0
     }
   },
   validations: {
@@ -204,6 +206,11 @@ export default {
       SellerDesc: { required, minLength: minLength(2), maxLength: maxLength(100) },
       SellerAccountNumber: { required, minLength: minLength(2), maxLength: maxLength(45) },
       SellerAccountName: { required, minLength: minLength(2), maxLength: maxLength(45) }
+    }
+  },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getSellers()
     }
   },
   computed: {
@@ -262,8 +269,9 @@ export default {
       this.$refs.addSeller.hide()
     },
     getSellers () {
-      this.$http.get(this.API_ENDPOINT + '/admin/seller', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.seller = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/seller?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.seller = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         console.log('this is an error ', err)
       })

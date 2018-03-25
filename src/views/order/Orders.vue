@@ -11,7 +11,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="orders" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="OrderStatus" slot-scope="data">
                   <b-badge v-if="data.item.OrderStatus===0" variant="warning">Pending</b-badge>
@@ -30,7 +30,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Orders</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <b-modal ref="addProduct" size="lg" header-bg-variant="primary" hide-footer title="Add Product">
       <div class="d-block">
@@ -173,14 +173,6 @@
       <b-button variant="success" @click="deleteProduct">Yes</b-button>
       <b-button variant="outline-danger" @click="cancelDelete">Cancel</b-button>
     </b-modal>
-    <div class="position-alert">
-      <b-alert :variant="alertVariant"
-               dismissible
-               :show="alertVisible"
-               @dismissed="alertVisible=false">
-        {{alertText}}
-      </b-alert>
-    </div>
 
   </div>
 </template>
@@ -221,9 +213,13 @@ export default {
       mainImage: '',
       thumbnail: '',
       deleteId: '',
-      alertVariant: 'success',
-      alertVisible: false,
-      alertText: 'test'
+      currentPage: 1,
+      count: 0
+    }
+  },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getAllOrders()
     }
   },
   methods: {
@@ -234,10 +230,6 @@ export default {
       this.$refs.confirm.show()
       this.deleteId = id
     },
-    makeAlert () {
-      this.$refs.confirm.show()
-      Events.$emit('alert', 'warning', 3000)
-    },
     showModal () {
       this.$refs.addProduct.show()
     },
@@ -245,8 +237,9 @@ export default {
       this.$refs.addProduct.hide()
     },
     getAllOrders () {
-      this.$http.get(this.API_ENDPOINT + '/admin/order/detail', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.orders = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/order/detail?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.orders = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         console.log('this is an error ', err)
       })
@@ -284,13 +277,8 @@ export default {
       this.$http.post(this.API_ENDPOINT + '/admin/product', formData, {headers: { 'Content-Type': 'multipart/form-data' }}).then(response => {
         if (response.data.code === 'Success') {
           this.hideModal()
-          this.alertText = 'Product successfully added'
-          this.alertVariant = 'success'
-          this.alertVisible = true
-          window.setTimeout(() => {
-            this.alertVisible = false
-          }, 2000)
           this.getAllProducts()
+          Events.$emit('alert', 'Order added', 'success', true)
         }
       }).catch(err => {
         console.log('this is an error ', err.response)
@@ -314,12 +302,3 @@ export default {
   }
 }
 </script>
-<style>
-  .position-alert{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 20000
-  }
-</style>

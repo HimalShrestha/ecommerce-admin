@@ -10,7 +10,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="messages" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="ContactStatus" slot-scope="data">
                   <b-badge v-if="data.item.ContactStatus===0" variant="warning">Not Responded</b-badge>
@@ -25,7 +25,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Messages</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <b-modal ref="replyMessage" size="lg" header-bg-variant="primary" hide-footer title="Reply to Messages">
       <div class="d-block">
@@ -88,20 +88,12 @@
       <b-btn class="mt-3" variant="primary" @click="reply">Reply</b-btn>
       <b-btn class="mt-3" variant="outline-danger" @click="hideModal">Close</b-btn>
     </b-modal>
-    <div class="position-alert">
-      <b-alert :variant="alertVariant"
-               dismissible
-               :show="alertVisible"
-               @dismissed="alertVisible=false">
-        {{alertText}}
-      </b-alert>
-    </div>
 
   </div>
 </template>
 
 <script>
-import {Events} from '../../events.js'
+// import {Events} from '../../events.js'
 export default {
   name: 'Message',
   data () {
@@ -124,18 +116,18 @@ export default {
         ContactStatus: ''
       },
       repMessage: '',
-      alertVariant: 'success',
-      alertVisible: false,
-      alertText: 'test'
+      currentPage: 1,
+      count: 0
+    }
+  },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getAllMessages()
     }
   },
   methods: {
     reply () {
 
-    },
-    makeAlert () {
-      this.$refs.confirm.show()
-      Events.$emit('alert', 'warning', 3000)
     },
     replyMessage (id) {
       this.messages.forEach(item => {
@@ -152,8 +144,9 @@ export default {
       this.$refs.replyMessage.hide()
     },
     getAllMessages () {
-      this.$http.get(this.API_ENDPOINT + '/admin/message', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.messages = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/message?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.messages = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         console.log('this is an error ', err)
       })
@@ -174,12 +167,3 @@ export default {
   }
 }
 </script>
-<style>
-  .position-alert{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 20000
-  }
-</style>

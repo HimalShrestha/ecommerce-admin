@@ -11,7 +11,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="carousels" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="image" slot-scope="data">
                   <img :src="API_ENDPOINT+'/admin/carousel/image/'+data.item.CarouselID+'?x='+Date.now()" alt="" style="max-width:300px;">
@@ -26,7 +26,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Carousel</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <b-modal ref="addCarousel" size="lg" header-bg-variant="primary" hide-footer title="Add Carousel">
       <div class="d-block">
@@ -173,7 +173,9 @@ export default {
       putStatus: '',
       deleteId: '',
       image: '',
-      putImage: ''
+      putImage: '',
+      currentPage: 1,
+      count: 0
     }
   },
   validations: {
@@ -188,6 +190,11 @@ export default {
     },
     carouselSingle: {
       CarouselDesc: { required, minLength: minLength(2), maxLength: maxLength(45) }
+    }
+  },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getCarousels()
     }
   },
   computed: {
@@ -269,8 +276,9 @@ export default {
       this.$refs.addCarousel.hide()
     },
     getCarousels () {
-      this.$http.get(this.API_ENDPOINT + '/admin/carousel', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.carousels = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/carousel?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.carousels = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         console.log('this is an error ', err)
       })

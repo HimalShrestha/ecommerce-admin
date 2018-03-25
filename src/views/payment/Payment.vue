@@ -11,7 +11,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="methods" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="option" slot-scope="data">
                   <b-button variant="warning" @click="editMethod(data.item.PaymentID)">Edit</b-button>
@@ -23,7 +23,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Payment Methods</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <b-modal ref="addMethod" size="lg" header-bg-variant="primary" hide-footer title="Add Method">
       <div class="d-block">
@@ -99,11 +99,18 @@ export default {
       paymentType: '',
       methodId: '',
       deleteId: '',
-      alreadyExists: false
+      alreadyExists: false,
+      currentPage: 1,
+      count: 0
     }
   },
   validations: {
     paymentType: { required, maxLength: maxLength(20) }
+  },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getMethods()
+    }
   },
   methods: {
     updateMethod () {
@@ -146,8 +153,9 @@ export default {
       this.$refs.addMethod.hide()
     },
     getMethods () {
-      this.$http.get(this.API_ENDPOINT + '/admin/payment', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.methods = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/payment?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.methods = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         console.log('this is an error ', err)
       })

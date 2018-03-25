@@ -11,7 +11,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="products" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="image" slot-scope="data">
                   <img :src="API_ENDPOINT+'/admin/product/image/'+data.item.ProductID" alt="" style="max-width:100px;">
@@ -26,7 +26,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Card footer</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <b-modal ref="addProduct" size="lg" header-bg-variant="primary" hide-footer title="Add Product">
       <div class="d-block">
@@ -234,14 +234,6 @@
       <b-button variant="success" @click="deleteProduct">Yes</b-button>
       <b-button variant="outline-danger" @click="cancelDelete">Cancel</b-button>
     </b-modal>
-    <div class="position-alert">
-      <b-alert :variant="alertVariant"
-               dismissible
-               :show="alertVisible"
-               @dismissed="alertVisible=false">
-        {{alertText}}
-      </b-alert>
-    </div>
 
   </div>
 </template>
@@ -282,9 +274,8 @@ export default {
       mainImage: '',
       thumbnail: '',
       deleteId: '',
-      alertVariant: 'success',
-      alertVisible: false,
-      alertText: 'test'
+      currentPage: 1,
+      count: 0
     }
   },
   validations: {
@@ -306,6 +297,11 @@ export default {
       size: { maxValue: maxValue(2 * 1024 * 1024) }
     }
   },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getAllProducts()
+    }
+  },
   methods: {
     cancelDelete () {
       this.$refs.confirm.hide()
@@ -321,8 +317,9 @@ export default {
       this.$refs.addProduct.hide()
     },
     getAllProducts () {
-      this.$http.get(this.API_ENDPOINT + '/admin/product', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.products = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/product?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.products = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         console.log('this is an error ', err)
         Events.$emit('alert', 'Something went wrong', 'danger', true)

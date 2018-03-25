@@ -11,7 +11,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="category" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="image" slot-scope="data">
                   <img :src="API_ENDPOINT+'/admin/product/image/'+data.item.ProductID" alt="" style="max-width:100px;">
@@ -26,7 +26,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Card footer</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <b-modal ref="addCategory" size="lg" header-bg-variant="primary" hide-footer title="Add Category">
       <div class="d-block">
@@ -101,11 +101,18 @@ export default {
       category: [],
       categoryName: '',
       categoryId: '',
-      deleteId: ''
+      deleteId: '',
+      currentPage: 1,
+      count: 0
     }
   },
   validations: {
     categoryName: { required, minLength: minLength(2), maxLength: maxLength(100) }
+  },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getCategories()
+    }
   },
   methods: {
     updateCategory () {
@@ -146,8 +153,9 @@ export default {
       this.$refs.addCategory.hide()
     },
     getCategories () {
-      this.$http.get(this.API_ENDPOINT + '/admin/product/category', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.category = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/product/category?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.category = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         console.log('this is an error ', err)
         Events.$emit('alert', 'Something went wrong', 'danger', true)

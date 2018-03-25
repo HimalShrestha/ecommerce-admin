@@ -11,7 +11,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="admins" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="AdminRegistrationDate" slot-scope="data">
                   {{data.item.AdminRegistrationDate.substring(0, 19).replace('T', ' ')}}
@@ -26,7 +26,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Admins</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <b-modal ref="addAdmin" size="lg" header-bg-variant="primary" hide-footer title="Add Admin">
       <div class="d-block">
@@ -203,14 +203,6 @@
       <b-button variant="success" @click="deleteProduct">Yes</b-button>
       <b-button variant="outline-danger" @click="cancelDelete">Cancel</b-button>
     </b-modal>
-    <div class="position-alert">
-      <b-alert :variant="alertVariant"
-               dismissible
-               :show="alertVisible"
-               @dismissed="alertVisible=false">
-        {{alertText}}
-      </b-alert>
-    </div>
 
   </div>
 </template>
@@ -255,10 +247,9 @@ export default {
       fname: '',
       lname: '',
       deleteId: '',
-      alertVariant: 'success',
-      alertVisible: false,
-      alertText: 'test',
-      usernameInUse: false
+      usernameInUse: false,
+      currentPage: 1,
+      count: 0
     }
   },
   validations: {
@@ -344,8 +335,9 @@ export default {
       this.$refs.addAdmin.hide()
     },
     getAllAdmins () {
-      this.$http.get(this.API_ENDPOINT + '/admin/member/admin', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.admins = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/member/admin?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.admins = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         console.log('this is an error ', err)
         Events.$emit('alert', 'Something went wrong', 'danger', true)
@@ -389,6 +381,11 @@ export default {
         Events.$emit('alert', 'Something went wrong', 'danger', true)
         console.log('this is an error ', err)
       })
+    }
+  },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getAllAdmins()
     }
   },
   created () {

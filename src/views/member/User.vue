@@ -11,7 +11,7 @@
             <b-col sm="12">
               <b-table hover outlined stacked="md" :items="users" :fields="fields">
                 <template slot="index" slot-scope="data">
-                  {{data.index + 1}}
+                  {{data.index+1 + ((currentPage-1)*SIZE)}}
                 </template>
                 <template slot="UserEmailVerified" slot-scope="data">
                   <b-badge v-if="data.item.UserEmailVerified===0" variant="danger">No</b-badge>
@@ -27,7 +27,7 @@
 
         </div>
       </b-card-body>
-      <div slot="footer">Users</div>
+      <div style="padding: 0.75rem 1.25rem;background-color: #f0f3f5;border-top: 1px solid #c2cfd6;"><b-pagination align="right" :total-rows="count" :per-page="this.SIZE" v-model="currentPage" style="margin: 0px;"></b-pagination></div>
     </b-card>
     <!-- <b-modal ref="addUser" size="lg" header-bg-variant="primary" hide-footer title="Add User">
       <div class="d-block">
@@ -316,7 +316,9 @@ export default {
         UserAddress2: ''
       },
       changePassword: '',
-      deleteId: ''
+      deleteId: '',
+      count: 0,
+      currentPage: 1
     }
   },
   validations: {
@@ -406,8 +408,9 @@ export default {
       this.$refs.addUser.hide()
     },
     getAllUsers () {
-      this.$http.get(this.API_ENDPOINT + '/admin/member/user', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.users = response.data
+      this.$http.get(this.API_ENDPOINT + '/admin/member/user?size=' + this.SIZE + '&page=' + this.currentPage, {headers: { 'Content-Type': 'application/json' }}).then(response => {
+        this.users = response.data.data
+        this.count = response.data.count
       }).catch(err => {
         Events.$emit('alert', 'Something went wrong', 'danger', true)
         console.log('this is an error ', err)
@@ -449,6 +452,11 @@ export default {
         Events.$emit('alert', 'Something went wrong', 'danger', true)
         console.log('this is an error ', err)
       })
+    }
+  },
+  watch: {
+    currentPage: function (naya, purano) {
+      this.getAllUsers()
     }
   },
   created () {

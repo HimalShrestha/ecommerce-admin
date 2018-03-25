@@ -116,7 +116,7 @@ export default {
   methods: {
     getAllOrders () {
       this.$http.get(this.API_ENDPOINT + '/admin/order/detail', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.orders = response.data
+        this.orders = response.data.data
         this.orders.forEach(item => {
           if (item.OrderStatus === 0) {
             this.pendingOrders.push(item)
@@ -128,7 +128,7 @@ export default {
     },
     getAllUsers () {
       this.$http.get(this.API_ENDPOINT + '/admin/member/user', {headers: { 'Content-Type': 'application/json' }}).then(response => {
-        this.users = response.data
+        this.users = response.data.data
       }).catch(err => {
         console.log('this is an error ', err)
       })

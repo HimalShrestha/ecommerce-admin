@@ -19,6 +19,8 @@ Vue.use(BootstrapVue)
 
 Vue.prototype.$http = axios
 
+Vue.prototype.SIZE = 30
+
 if (process.env.NODE_ENV === 'production') {
   Vue.prototype.API_ENDPOINT = ''
   Vue.prototype.WEB_ROOT = 'http://202.79.34.189:7711'
